@@ -7,14 +7,15 @@ import {FaSearch} from "react-icons/fa";
 import {FiMinus, FiPlus} from "react-icons/fi";
 import {toast} from "react-toastify";
 import {PiWarningOctagonBold} from "react-icons/pi";
-import {AddBook} from "../../service/AppService.js";
+import {AddBook} from "../../service/AppService.jsx";
+import {IS_STATUS} from "../../utils/Chacked.js";
 
 const Menu = () => {
     const [books, setBooks] = useState([])
     const [bookName, setBookName] = useState('')
     const [bookAuthor, setBookAuthor] = useState('')
     const [bookDescription, setBookDescription] = useState('')
-    const [bookPdf, setBookPdf] = useState()
+    const [bookPdf, setBookPdf] = useState('')
 
     let toastId = null;
 
@@ -45,29 +46,22 @@ const Menu = () => {
                     });
                 }
             } else {
-                const reader = new FileReader()
-                reader.readAsDataURL(bookPdf)
-                reader.onload = async () => {
-                    const base64 = reader.result.split(",")[1];
-                    let data = {
-                        name: bookName,
-                        author: bookAuthor,
-                        description: bookDescription,
-                        pdfBook: base64
-                    }
-                    const res = await AddBook(data, getAll)
+                let data = {
+                    name: bookName,
+                    author: bookAuthor,
+                    description: bookDescription,
+                    pdfBookFile: bookPdf
                 }
-                reader.onerror = () => {
-                    toast.error("Faylni o'qishda xatolik yuz berdi!", {
-                        position: "top-right",
-                        autoClose: 2000
-                    });
-                };
+                let set = {
+                    bookName: setBookName,
+                    bookAuthor: setBookAuthor,
+                    bookDescription: setBookDescription,
+                    bookPdf: setBookPdf
+                }
+                const res = await AddBook(data, getAll, set)
             }
-
-
         } catch (err) {
-
+            console.log(err)
         }
     }
 
@@ -92,7 +86,12 @@ const Menu = () => {
         const fileNameDisplay = document.getElementById("file-name");
 
         if (file) {
-            setBookPdf(file)
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const base64File = event.target.result.split(",")[1]; // Faqat Base64 qismi
+                setBookPdf(base64File); // PDF ma'lumotni saqlash
+            };
+            reader.readAsDataURL(file);
             fileNameDisplay.textContent = "Tanlangan fayl: " + fileInput.files[0].name;
         } else {
             fileNameDisplay.textContent = "Tanlangan fayl: Yo'q";
@@ -140,7 +139,7 @@ const Menu = () => {
                 </button>
             </div>
             <div className="books">
-                <Books/>
+                <Books books={books}/>
             </div>
         </div>
     );
