@@ -1,5 +1,155 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+.all-menu {
+    padding-top: 5.5rem;
+}
+
+.books {
+    margin-top: 3%;
+}
+
+.control-p {
+    width: 100%;
+    background: white;
+    position: fixed;
+    z-index: 5;
+    padding-top: 1.5rem;
+}
+
+.control-panel {
+    width: 90%;
+    height: 8vh;
+    margin-left: 5%;
+    background: rgba(0, 46, 255, 0.11);
+    backdrop-filter: blur(50px);
+    border-radius: 5rem;
+    padding: .7rem 1rem;
+    box-shadow: 0 0 13px 0 rgba(0, 0, 139, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.search {
+    display: flex;
+    align-items: center;
+    width: 26%;
+    background: rgba(0, 46, 255, 0.18);
+    border-radius: 2rem;
+    padding: 0 1.3rem;
+}
+
+.search .search-input {
+    width: 98%;
+    border: none;
+    background: none;
+    outline: none;
+    color: #000041;
+    font-size: 17px;
+    padding: 0 .7rem;
+}
+
+.search-input::placeholder {
+    color: #595959;
+}
+
+.btn {
+    border: none;
+    border-radius: 2rem;
+    width: 15%;
+    height: 5vh;
+    background: rgba(0, 0, 255, 0.76);
+    color: white;
+    font-size: 16px;
+    transition: .3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn:hover {
+    background: rgba(0, 0, 255, 0.86);
+    box-shadow: 1px 1px 10px 0 rgba(84, 78, 78, 0.76);
+}
+
+.btn:active {
+    background: rgba(0, 0, 255, 0.96);
+    box-shadow: 1px 1px 10px 0 rgb(1, 13, 59);
+}
+
+.a-book {
+    position: fixed;
+    width: 90%;
+    height: 30vh;
+    margin-top: 6.5%;
+    transition: .5s;
+    margin-left: -250%;
+    /*margin-left: 5%;*/
+    background: linear-gradient(to bottom, rgba(0, 19, 255, 0.86), rgb(152, 168, 220));
+    backdrop-filter: blur(20px);
+    border-radius: .5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+.add-book {
+    margin-left: 5%;
+}
+
+.book-input {
+    color: white;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: start;
+    width: 45%;
+}
+
+.book-input label {
+    padding: 0 1rem;
+}
+
+.input {
+    outline: none;
+    background: rgb(29, 0, 253);
+    border: 1px solid white;
+    width: 90%;
+    border-radius: 2rem;
+    padding: 0 1rem;
+    color: white;
+    font-size: 16px;
+}
+
+.input::placeholder {
+    color: #bbbbbb;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.custom-file-input {
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.custom-file-input:hover {
+    background-color: #3a5bdc;
+}
+
+.file-name {
+    font-weight: bold;
+    padding: 0 1rem;
+    color: white;
+}
+
+.save-btn{
+    margin-top: .5rem;
 }

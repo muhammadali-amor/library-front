@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from "../component/admin/Navbar.jsx";
+import Navbar from "../component/Navbar.jsx";
 import './AdminLayout.css'
 import {Outlet} from "react-router-dom";
 

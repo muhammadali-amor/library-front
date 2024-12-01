@@ -1,6 +1,6 @@
 import React from 'react';
-import '../../assets/Admin/Navbar.css'
-import rasm from '../../assets/images/img.png';
+import '../assets/Navbar.css'
+import rasm from '../assets/images/img.png';
 
 
 const Navbar = () => {
