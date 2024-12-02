@@ -9,6 +9,7 @@ import {toast} from "react-toastify";
 import {PiWarningOctagonBold} from "react-icons/pi";
 import {AddBook} from "../../service/AppService.jsx";
 import {IS_STATUS} from "../../utils/Chacked.js";
+import Loading from "../Loading.jsx";
 
 const Menu = () => {
     const [books, setBooks] = useState([])
@@ -19,6 +20,7 @@ const Menu = () => {
 
     let toastId = null;
 
+    const [loading, setLoading] = useState(false)
     const [addBook, setAddBook] = useState(false)
 
     const toggleAdd = () => setAddBook(!addBook)
@@ -28,6 +30,26 @@ const Menu = () => {
             if (bookName.length === 0 || bookAuthor.length === 0 || bookDescription.length === 0 || bookPdf === undefined) {
                 if (!toast.isActive(toastId)) {
                     toastId = toast.warning("Ma'lutmotlar to'liq emas !", {
+                        icon: <PiWarningOctagonBold/>,
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        style: {
+                            backgroundColor: "darkblue",
+                            color: "white"
+                        },
+                        progressStyle: {
+                            background: "linear-gradient(to bottom, rgba(10, 129, 255), rgb(152, 168, 220))",
+                        }
+                    });
+                }
+            } else if (bookDescription.length < 50) {
+                if (!toast.isActive(toastId)) {
+                    toastId = toast.warning("Kitob tavsifi kam !", {
                         icon: <PiWarningOctagonBold/>,
                         position: "top-right",
                         autoClose: 2000,
@@ -59,6 +81,7 @@ const Menu = () => {
                     bookPdf: setBookPdf
                 }
                 const res = await AddBook(data, getAll, set)
+                if (res) toggleAdd()
             }
         } catch (err) {
             console.log(err)
@@ -69,7 +92,7 @@ const Menu = () => {
         try {
             const res = await BASE_CONFIG.doGet(APP_API.book)
             setBooks(res.data)
-            console.log(books)
+            setLoading(true)
         } catch (err) {
             console.log(err)
         }
@@ -100,48 +123,50 @@ const Menu = () => {
 
 
     return (
-        <div className={'all-menu'}>
-            <div className="control-p">
-                <div className="control-panel">
-                    <div className="search">
-                        <FaSearch className={"search-icon"}/>
-                        <input type={"search"} placeholder={"Kitob nomi"} className={"search-input"}/>
+        !loading ? <Loading/> :
+            <div className={'all-menu'}>
+                <div className="control-p">
+                    <div className="control-panel">
+                        <div className="search">
+                            <FaSearch className={"search-icon"}/>
+                            <input type={"search"} placeholder={"Kitob nomi"} className={"search-input"}/>
+                        </div>
+                        <button className="btn add" onClick={() => toggleAdd()}>
+                            Kitob Qo'shish {addBook ? <FiMinus/> : <FiPlus/>}
+                        </button>
                     </div>
-                    <button className="btn add" onClick={() => toggleAdd()}>
-                        Kitob Qo'shish {addBook ? <FiMinus/> : <FiPlus/>}
+                </div>
+                <div className={addBook ? 'add-book a-book' : 'a-book'}>
+                    <div className="book-input bookName">
+                        <label htmlFor={"bookName"}>Kitob nomi</label>
+                        <input value={bookName} onChange={e => setBookName(e.target.value)} placeholder={"Kitob nomi"}
+                               type="text" id={"bookName"} className="input "/>
+                    </div>
+                    <div className="book-input bookAuthor">
+                        <label htmlFor={"bookAuthor"}>Kitob avtori kim</label>
+                        <input value={bookAuthor} onChange={e => setBookAuthor(e.target.value)}
+                               placeholder={"Kitob aftori"}
+                               type="text" id={"bookAuthor"} className="input "/>
+                    </div>
+                    <div className="book-input bookDescription">
+                        <label htmlFor={"bookDescription"}>Kitob tavsifi</label>
+                        <input value={bookDescription} onChange={e => setBookDescription(e.target.value)}
+                               placeholder={"Kitob tavsifi"} type="text" id={"bookDescription"} className="input"/>
+                    </div>
+                    <div className="book-input bookFile">
+                        <div className={'file-name'} id={"file-name"}>File nomi</div>
+                        <label htmlFor={"file-upload"} className={'custom-file-input input'}>Kitob file</label>
+                        <input onChange={e => updateFileName(e)} placeholder={"Kitob file"}
+                               type="file" id={"file-upload"} className="input "/>
+                    </div>
+                    <button className="btn save-btn" onClick={() => adBook()}>
+                        Saqlash
                     </button>
                 </div>
+                <div className="books">
+                    <Books books={books}/>
+                </div>
             </div>
-            <div className={addBook ? 'add-book a-book' : 'a-book'}>
-                <div className="book-input bookName">
-                    <label htmlFor={"bookName"}>Kitob nomi</label>
-                    <input value={bookName} onChange={e => setBookName(e.target.value)} placeholder={"Kitob nomi"}
-                           type="text" id={"bookName"} className="input "/>
-                </div>
-                <div className="book-input bookAuthor">
-                    <label htmlFor={"bookAuthor"}>Kitob avtori kim</label>
-                    <input value={bookAuthor} onChange={e => setBookAuthor(e.target.value)} placeholder={"Kitob aftori"}
-                           type="text" id={"bookAuthor"} className="input "/>
-                </div>
-                <div className="book-input bookDescription">
-                    <label htmlFor={"bookDescription"}>Kitob tavsifi</label>
-                    <input value={bookDescription} onChange={e => setBookDescription(e.target.value)}
-                           placeholder={"Kitob tavsifi"} type="text" id={"bookDescription"} className="input"/>
-                </div>
-                <div className="book-input bookFile">
-                    <div className={'file-name'} id={"file-name"}>File nomi</div>
-                    <label htmlFor={"file-upload"} className={'custom-file-input input'}>Kitob file</label>
-                    <input onChange={e => updateFileName(e)} placeholder={"Kitob file"}
-                           type="file" id={"file-upload"} className="input "/>
-                </div>
-                <button className="btn save-btn" onClick={() => adBook()}>
-                    Saqlash
-                </button>
-            </div>
-            <div className="books">
-                <Books books={books}/>
-            </div>
-        </div>
     );
 };
 

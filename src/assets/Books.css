@@ -15,15 +15,17 @@
 
 .card {
     width: 20%;
-    height: auto;
+    height:auto;
     border-radius: .3rem;
     border: 1px solid #0900ff;
-    margin: 1rem;
-    transition: .5s ease;
+    margin: 1rem 1rem 1rem 1rem;
+    transition: .3s ease;
+    overflow: hidden;
 }
 
 .card:hover {
     box-shadow: 3px 3px 15px 0 darkblue;
+    /*margin: .9rem 1rem 1rem 1rem;*/
 }
 
 .img-div {
@@ -44,7 +46,7 @@
     align-items: center;
     justify-content: center;
     margin-right: 5rem;
-    z-index: 2;
+    z-index: 1;
 }
 
 .img {
@@ -52,6 +54,9 @@
     margin-left: 2%;
     margin-top: 2%;
     position: relative;
+    height: 250px;
+    object-fit: cover;
+    object-position: center;
 }
 
 .name {
@@ -60,9 +65,23 @@
 }
 
 .description {
+    width: auto;
+    height: 100px;
+    overflow: hidden;
+    position: relative;
     font-size: 13px;
     padding: 0 .4rem;
     border-bottom: 1px solid gray;
+}
+
+.description-p{
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 2.1;
+    max-height: 8em;
 }
 
 .footer {
@@ -72,6 +91,7 @@
 }
 
 .author {
+    width: 100%;
     font-size: 15px;
     color: rgba(54, 0, 255, 0.67);
     padding: 0 1rem;

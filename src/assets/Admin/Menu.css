@@ -96,6 +96,7 @@
     align-items: center;
     justify-content: space-evenly;
     flex-wrap: wrap;
+    z-index: 5;
 }
 
 .add-book {
