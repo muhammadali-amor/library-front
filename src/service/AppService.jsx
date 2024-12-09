@@ -6,12 +6,15 @@ import React from "react";
 import {FaCheck} from "react-icons/fa";
 import {PiWarningOctagonBold} from "react-icons/pi";
 import {MdError} from "react-icons/md";
+import axios from "axios";
+import {BASE_URL} from "./BaseUrl.js";
 
 let toastId = null;
 
 export const AddBook = async (data, getAll, set) => {
     try {
         const res = await BASE_CONFIG.doPost(APP_API.book, data)
+        console.log(res)
         if (res.data === "Kitob mavjud") {
             if (!toast.isActive(toastId)) {
                 toastId = toast.warning(res.data, {
@@ -38,6 +41,7 @@ export const AddBook = async (data, getAll, set) => {
             set.bookDescription('')
             set.bookName('')
             set.bookAuthor('')
+            set.bookPdfName = ''
             set.bookPdf(null)
             if (!toast.isActive(toastId)) {
                 toastId = toast.success("Kitob saqlandi !", {
@@ -59,7 +63,7 @@ export const AddBook = async (data, getAll, set) => {
                 });
                 return toastId
             }
-        }else {
+        } else {
             if (!toast.isActive(toastId)) {
                 toastId = toast.warning("Xatolik :(", {
                     icon: <MdError style={{color: "red"}}/>,
@@ -97,5 +101,18 @@ export const DeleteBook = async (id, getAll) => {
         }
     } catch (e) {
         console.log(e)
+    }
+}
+
+export const UploadFile = async (api, img) => {
+    try {
+        const formData = new FormData();
+        formData.append("file", img);
+        const res = await axios.post(`${BASE_URL}/files/upload`)
+        toast.success(res.data.message)
+        return res.data;
+    } catch (err) {
+        console.log(err)
+        toast.error('Rasm yuklashda xatolik yuz berdi')
     }
 }

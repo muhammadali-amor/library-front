@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import '../assets/Books.css'
 import rasm from '../assets/images/img_1.png'
-import {FaStar} from "react-icons/fa";
+import {FaCheck, FaStar} from "react-icons/fa";
 import {ImDownload2} from "react-icons/im";
 import {MdOutlineReadMore} from "react-icons/md";
 import axios from "axios";
 import {BASE_URL} from "../service/BaseUrl.js";
 import {useNavigate} from "react-router-dom";
+import {toast} from "react-toastify";
+import {PiWarningOctagonBold} from "react-icons/pi";
 
 const Books = ({books}) => {
 
@@ -15,29 +17,59 @@ const Books = ({books}) => {
     const [bookImages, setBookImages] = useState({});
     const [error, setError] = useState("");
 
-    const fetchPdf = async (id) => {
-        try {
-            const response = await axios.get(`${BASE_URL}/book/${id}`, {responseType: 'arraybuffer'});
-            const pdfBlob = new Blob([response.data], {type: 'application/pdf'});
-            const pdfUrl = URL.createObjectURL(pdfBlob);
-            window.open(pdfUrl, '_blank');
-        } catch (error) {
-            console.error("PDFni olishda xato:", error);
-        }
-    };
+    let toastId = null
 
-    const downloadPdf = async (id, name, author) => {
+    const downloadPdf = async (fileName, name, author) => {
         try {
-            const response = await axios.get(`${BASE_URL}/book/${id}`, {responseType: 'arraybuffer'});
-            const blob = new Blob([response.data], {type: 'application/pdf'});
+            const res = await axios.get(`http://localhost:9999/api/files/${fileName}`, {
+                responseType: 'blob', // Faylni blob formatida olish
+            });
+
             const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `${name} ${author}.pdf`;
+            link.href = URL.createObjectURL(new Blob([res.data], {type: 'application/pdf'}));
+            link.download = `${name}_${author}.pdf`; // Fayl nomini o'zgartirish
+            document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
+            if (!toast.isActive(toastId)) {
+                toastId = toast.success(`${name} saqlandi !`, {
+                    icon: <FaCheck style={{color: "green"}}/>,
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    style: {
+                        backgroundColor: "darkblue",
+                        color: "white"
+                    },
+                    progressStyle: {
+                        background: "linear-gradient(to bottom, rgba(10, 229, 55), rgb(52, 255, 100))",
+                    }
+                });
+                return toastId
+            }
         } catch (error) {
             console.error('PDFni yuklab olishda xato:', error);
         }
     };
+
+    const getBookPdf = async (fileName) => {
+        try {
+            const res = await axios.get(`http://localhost:9999/api/files/${fileName}`, {
+                responseType: 'arraybuffer',  // Faylni binary formatda olish
+            });
+
+            // Yangi oynada PDF faylini ko'rsatish
+            const fileURL = URL.createObjectURL(new Blob([res.data], {type: 'application/pdf'}));
+            window.open(fileURL, '_blank');  // Yangi oynada ochish
+
+        } catch (err) {
+            toast.error("get pdf xatolik")
+        }
+    }
 
     const getBookImage = async (bookName, authorName) => {
         // const query = ` Urush va Tinchlik  Lev Tolstoy`;
@@ -76,11 +108,13 @@ const Books = ({books}) => {
         getBookImages();
     }, [books]);
 
+    console.log(books)
+
     return (
         <div className={"books"}>
             {books.map((item, i) => (
                 <div className="card book">
-                    <div className="img-div" onClick={() => fetchPdf(item.id)}>
+                    <div className="img-div" onClick={() => getBookPdf(item.pdfBookFileName)}>
                         <button className="read">
                             <MdOutlineReadMore className={'read-icon'}/>
                         </button>
@@ -101,7 +135,7 @@ const Books = ({books}) => {
                         </div>
                         <span className="grade">
                         <button className="btn-download"
-                                onClick={() => downloadPdf(item.id, item.name, item.author)}><ImDownload2/></button>
+                                onClick={() => downloadPdf(item.pdfBookFileName, item.name, item.author)}><ImDownload2/></button>
                         <p className={"number"}>5</p>
                         <FaStar className={"icon"}/>
                     </span>

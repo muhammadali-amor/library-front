@@ -10,13 +10,15 @@ import {PiWarningOctagonBold} from "react-icons/pi";
 import {AddBook} from "../../service/AppService.jsx";
 import {IS_STATUS} from "../../utils/Chacked.js";
 import Loading from "../Loading.jsx";
+import axios from "axios";
+import pdfPage from "../../pages/PdfPage.jsx";
 
 const Menu = () => {
     const [books, setBooks] = useState([])
     const [bookName, setBookName] = useState('')
     const [bookAuthor, setBookAuthor] = useState('')
     const [bookDescription, setBookDescription] = useState('')
-    const [bookPdf, setBookPdf] = useState('')
+    const [bookPdf, setBookPdf] = useState(null)
 
     let toastId = null;
 
@@ -25,63 +27,30 @@ const Menu = () => {
 
     const toggleAdd = () => setAddBook(!addBook)
 
-    const adBook = async () => {
+    const adBook = async (bookFileName) => {
         try {
-            if (bookName.length === 0 || bookAuthor.length === 0 || bookDescription.length === 0 || bookPdf === undefined) {
-                if (!toast.isActive(toastId)) {
-                    toastId = toast.warning("Ma'lutmotlar to'liq emas !", {
-                        icon: <PiWarningOctagonBold/>,
-                        position: "top-right",
-                        autoClose: 2000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        style: {
-                            backgroundColor: "darkblue",
-                            color: "white"
-                        },
-                        progressStyle: {
-                            background: "linear-gradient(to bottom, rgba(10, 129, 255), rgb(152, 168, 220))",
-                        }
-                    });
-                }
-            } else if (bookDescription.length < 50) {
-                if (!toast.isActive(toastId)) {
-                    toastId = toast.warning("Kitob tavsifi kam !", {
-                        icon: <PiWarningOctagonBold/>,
-                        position: "top-right",
-                        autoClose: 2000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        style: {
-                            backgroundColor: "darkblue",
-                            color: "white"
-                        },
-                        progressStyle: {
-                            background: "linear-gradient(to bottom, rgba(10, 129, 255), rgb(152, 168, 220))",
-                        }
-                    });
-                }
-            } else {
-                let data = {
-                    name: bookName,
-                    author: bookAuthor,
-                    description: bookDescription,
-                    pdfBookFile: bookPdf
-                }
-                let set = {
-                    bookName: setBookName,
-                    bookAuthor: setBookAuthor,
-                    bookDescription: setBookDescription,
-                    bookPdf: setBookPdf
-                }
-                const res = await AddBook(data, getAll, set)
-                if (res) toggleAdd()
+            // let formData = new FormData();
+            // formData.append("name", bookName);
+            // formData.append("author", bookAuthor);
+            // formData.append("description", bookDescription);
+            // formData.append("pdfBookFileName", bookPdfName);
+            let formData = {
+                name: bookName,
+                author: bookAuthor,
+                description: bookDescription,
+                pdfBookFileName: bookFileName
+            }
+            let set = {
+                bookName: setBookName,
+                bookAuthor: setBookAuthor,
+                bookDescription: setBookDescription,
+                bookPdf: setBookPdf,
+                bookPdfName: bookFileName
+            }
+            const res = await AddBook(formData, getAll, set)
+            if (res) {
+                toggleAdd()
+                setLoading(true)
             }
         } catch (err) {
             console.log(err)
@@ -91,8 +60,8 @@ const Menu = () => {
     const getAll = async () => {
         try {
             const res = await BASE_CONFIG.doGet(APP_API.book)
-            setBooks(res.data)
             setLoading(true)
+            setBooks(res.data)
         } catch (err) {
             console.log(err)
         }
@@ -102,24 +71,103 @@ const Menu = () => {
         getAll()
     }, [])
 
-    function updateFileName(e) {
-        const fileInput = e.target
+    const handleFileChange = (e) => {
         const file = e.target.files[0]
-
-        const fileNameDisplay = document.getElementById("file-name");
-
         if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const base64File = event.target.result.split(",")[1]; // Faqat Base64 qismi
-                setBookPdf(base64File); // PDF ma'lumotni saqlash
-            };
-            reader.readAsDataURL(file);
-            fileNameDisplay.textContent = "Tanlangan fayl: " + fileInput.files[0].name;
-        } else {
-            fileNameDisplay.textContent = "Tanlangan fayl: Yo'q";
+            setBookPdf(file);
+        } // Tanlangan faylni olish
+    };
+
+    const handleUpload = async () => {
+        if (!bookPdf) {
+            if (!toast.isActive(toastId)) {
+                toastId = toast.warning("Fayl tanlanmagan !", {
+                    icon: <PiWarningOctagonBold/>,
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    style: {
+                        backgroundColor: "darkblue",
+                        color: "white"
+                    },
+                    progressStyle: {
+                        background: "linear-gradient(to bottom, rgba(10, 129, 255), rgb(152, 168, 220))",
+                    }
+                });
+                return;
+            }
         }
-    }
+
+        const formData = new FormData();
+        formData.append('file', bookPdf);
+
+        if (bookName.length === 0 || bookAuthor.length === 0 || bookDescription.length === 0) {
+            if (!toast.isActive(toastId)) {
+                toastId = toast.warning("Ma'lutmotlar to'liq emas !", {
+                    icon: <PiWarningOctagonBold/>,
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    style: {
+                        backgroundColor: "darkblue",
+                        color: "white"
+                    },
+                    progressStyle: {
+                        background: "linear-gradient(to bottom, rgba(10, 129, 255), rgb(152, 168, 220))",
+                    }
+                });
+                return;
+            }
+        }
+        if (bookDescription.length < 50) {
+            if (!toast.isActive(toastId)) {
+                toastId = toast.warning("Kitob tavsifi kam !", {
+                    icon: <PiWarningOctagonBold/>,
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    style: {
+                        backgroundColor: "darkblue",
+                        color: "white"
+                    },
+                    progressStyle: {
+                        background: "linear-gradient(to bottom, rgba(10, 129, 255), rgb(152, 168, 220))",
+                    }
+                });
+                return;
+            }
+        }
+
+        try {
+            // Faylni serverga yuborish
+            const res = await axios.post(`http://localhost:9999/api/files/upload`, formData, {
+                headers: {
+                    // "Access-Control-Allow-Origin": "*",
+                    // "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+                    // "Content-Type": "multipart/form-data", // Faylni yuborish uchun
+                },
+            });
+            if (res.status === 200) {
+                // Fayl muvaffaqiyatli yuklandi, filenameni olish
+                await adBook(res.data)
+            }
+        } catch (error) {
+            console.error('Fayl yuklashda xatolik yuz berdi', error);
+            toast.error('Fayl yuklashda xatolik yuz berdi');
+        }
+    };
 
 
     return (
@@ -156,10 +204,14 @@ const Menu = () => {
                     <div className="book-input bookFile">
                         <div className={'file-name'} id={"file-name"}>File nomi</div>
                         <label htmlFor={"file-upload"} className={'custom-file-input input'}>Kitob file</label>
-                        <input onChange={e => updateFileName(e)} placeholder={"Kitob file"}
-                               type="file" id={"file-upload"} className="input "/>
+                        <input onChange={e => handleFileChange(e)}
+                               placeholder={"Kitob file"}
+                               type="file"
+                               accept={"application/pdf"}
+                               id={"file-upload"}
+                               className="input "/>
                     </div>
-                    <button className="btn save-btn" onClick={() => adBook()}>
+                    <button className="btn save-btn" onClick={() => handleUpload()}>
                         Saqlash
                     </button>
                 </div>
