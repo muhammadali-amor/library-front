@@ -72,7 +72,7 @@ const Books = ({books}) => {
     }
 
     const getBookImage = async (bookName, authorName) => {
-        // const query = ` Urush va Tinchlik  Lev Tolstoy`;
+        // const query = ` Urush va Tinchlik  Lev Tolstoy`;+
         const query = `${bookName} ${authorName}`;
         const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}`;
         try {
@@ -108,7 +108,6 @@ const Books = ({books}) => {
         getBookImages();
     }, [books]);
 
-    console.log(books)
 
     return (
         <div className={"books"}>

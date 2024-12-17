@@ -29,11 +29,6 @@ const Menu = () => {
 
     const adBook = async (bookFileName) => {
         try {
-            // let formData = new FormData();
-            // formData.append("name", bookName);
-            // formData.append("author", bookAuthor);
-            // formData.append("description", bookDescription);
-            // formData.append("pdfBookFileName", bookPdfName);
             let formData = {
                 name: bookName,
                 author: bookAuthor,

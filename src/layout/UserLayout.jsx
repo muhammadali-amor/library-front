@@ -1,12 +1,22 @@
 import React from 'react';
-import Navbar from "../component/Navbar.jsx";
-import Books from "../pages/Books.jsx";
-
+import './UserLayout.css'
+import UIKit from "../pages/UIKIT.jsx";
 const UserLayout = () => {
     return (
-        <div>
-            <Navbar/>
-            <Books/>
+        <div className={'us-panel'}>
+            <UIKit/>
+            {/*<Navbar/>*/}
+            {/*<div className="us-menus">*/}
+            {/*    <div className="blur">*/}
+
+            {/*    </div>*/}
+            {/*    <div className="outlet">*/}
+            {/*        <Outlet/>*/}
+            {/*    </div>*/}
+            {/*    <div className="blur">*/}
+
+            {/*    </div>*/}
+            {/*</div>*/}
         </div>
     );
 };

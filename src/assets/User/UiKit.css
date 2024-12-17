@@ -1,0 +1,81 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.all {
+    width: 100%;
+    height: 100vh;
+    background-image: url("../../assets/images/rasm.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.uikit {
+    width: 80%;
+    margin-left: 10%;
+    height: 100vh;
+    padding: 1rem;
+    backdrop-filter: blur(10px);
+}
+
+.uk-container{
+    /*width: 100%;*/
+    height: 10vh;
+    background: linear-gradient(#b08f64, #f5d9bb, #e0c29b);
+    margin-bottom: 8px;
+    color: white;
+}
+
+.uk-navbar-nav li a{
+    color: white;
+}
+
+.imgs {
+    width: 100%;
+    height: 30vh;
+}
+
+.imgs img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.uk-card {
+    width: 100%;
+    height: 49vh;
+    margin-top: 10%;
+    background: linear-gradient(#b08f64, #f5d9bb, #e0c29b);
+    /*background-image: url("../img/img_1.png");*/
+    /*background-position: center;*/
+    /*background-repeat: no-repeat;*/
+    /*background-size: cover;*/
+    padding: .5rem .4rem;
+    transition: .8s ease;
+}
+
+.uk-card:hover{
+    transform: scale(1.01) translateY(-3px);
+    box-shadow: 0 0 10px 2px #ffd4a0;
+}
+
+.uk-card img {
+    width: 100%;
+    height: 80%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.uk-card h5, .uk-card h6 {
+    margin: 0;
+    padding: .5rem;
+}
+
+.pagination{
+    height: auto;
+    width: 100%;
+}
